@@ -43,3 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c79bb05f968c3f4387ebbd054a7650c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inventoryPanel: {fileID: 0}
+  uI: {fileID: 0}
+  interactable: {fileID: 0}
+  itemDatabase: {fileID: 11400000, guid: ac275cd8772761d46b05f6ec098e42ba, type: 2}

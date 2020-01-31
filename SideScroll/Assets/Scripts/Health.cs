@@ -13,6 +13,9 @@ public class Health : MonoBehaviour
 
     public int CurrentHealth { get => currentHealth;  }
     public int MaxHealthAmount { get => maxHealthAmount;  }
+    public int armorAmount;
+
+    ///////////////////
 
     void Start()
     {

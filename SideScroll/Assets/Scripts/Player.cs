@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
+
 
 #pragma warning disable CS0649
 public class Player : MonoBehaviour
@@ -37,6 +39,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     BoxCollider2D playerCol;
     private Health hP;
+    [SerializeField] BuffReceaver buffReceaver;
+    public BuffReceaver BuffReceaver { get => buffReceaver; }
 
     public Health HP { get => hP; }
 
@@ -80,7 +84,7 @@ public class Player : MonoBehaviour
     [SerializeField] private LayerMask layer;
     [SerializeField] private float rayLenght;
     public static Player Instance { get; private set; }
-
+    
 
 
 
@@ -116,9 +120,31 @@ public class Player : MonoBehaviour
             arrowList.Add(arrowTemp);
 
         }
-
+        buffReceaver.OnBuffChanged += ApllyBuff;
     }
 
+private void ApllyBuff(Buff currentBuff)
+{
+    Debug.Log(currentBuff.type);
+   switch(currentBuff.type)
+   {
+       case(BuffType.Armor):
+       currentBuff.ArmorBuff(ref hP.armorAmount);
+       break;
+       case(BuffType.Damage):
+       for(int i =0; i<arrowList.Count; i++)
+       {
+         
+          currentBuff.DamageBuff( arrowList[i].ChangeDamge);
+       }
+       break;
+       case(BuffType.Force):
+       currentBuff.ForceBuff(ref force);
+       break;
+       
+   }
+   
+}
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -206,7 +232,7 @@ public class Player : MonoBehaviour
            if(OnSlope() && !walingUpSlipe&& !isJumping)
            {
                transform.Translate(Vector2.down * playerCol.size.y / 2 * slopeForce * Time.deltaTime);
-                Debug.Log(rb.velocity.y);
+               
            }
         }
 
@@ -415,7 +441,9 @@ public class Player : MonoBehaviour
         
 
     }
-
    
 
+
 }
+
+   

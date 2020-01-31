@@ -63,4 +63,8 @@ public class Arrow : MonoBehaviour, IReusableOblects
        Destroy(gameObject);
         yield break;
    }
+   public void ChangeDamge(int damage)
+   {
+       trigger.Dmg += damage; 
+   }
 }

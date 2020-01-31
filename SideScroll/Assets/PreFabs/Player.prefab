@@ -211,6 +211,7 @@ GameObject:
   - component: {fileID: 815846938}
   - component: {fileID: 1501602391859032096}
   - component: {fileID: 1283859290}
+  - component: {fileID: 8458642806561321210}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -322,7 +323,7 @@ MonoBehaviour:
   maxSpeed: 6
   minHeight: -10
   maxSlopAngle: 80
-  slopeForce: 40
+  slopeForce: 3
   animator: {fileID: 1501602391859032096}
   playerCol: {fileID: 1283859290}
   arrow: {fileID: 3233779293798800159, guid: 76c5533793635d940bfb5844ead446c2, type: 3}
@@ -376,6 +377,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiText: {fileID: 0}
+  invetorySize: 20
 --- !u!95 &1501602391859032096
 Animator:
   serializedVersion: 3
@@ -421,3 +423,15 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.89952374, y: 1.8942013}
   m_EdgeRadius: 0
+--- !u!114 &8458642806561321210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4187328295363306635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0b2f1179959891438b3d36e4a74eb51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

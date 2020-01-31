@@ -6,11 +6,14 @@ using UnityEngine.UI;
 #pragma warning disable CS0649
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] GameObject inventoryPanel;
     public static GameManager Instance {get;private set;}
     public Dictionary <GameObject,Health> HealthDictionaty;
     public Dictionary <GameObject,Coin> CointDisctionary;
+    public Dictionary <GameObject,ItemComponent> itemDictionary;
     [SerializeField ] private GameObject uI;
    [SerializeField ] private Button interactable;
+   public ItemDatabase itemDatabase;
     
     
     void Awake()
@@ -18,6 +21,7 @@ public class GameManager : MonoBehaviour
         Instance = this;
         HealthDictionaty = new Dictionary<GameObject, Health>();
         CointDisctionary = new Dictionary<GameObject, Coin>();
+        itemDictionary = new Dictionary <GameObject,ItemComponent>();
         
     }
     private void Start()
@@ -32,10 +36,21 @@ public class GameManager : MonoBehaviour
     
     public void OnPauseClicked()
     {
-        Player.Instance.CanShoot = false;
-        Time.timeScale = 0;
-        uI.gameObject.SetActive(true);
-       
+        
+        if(Time.timeScale > 0 )
+        {
+         Player.Instance.CanShoot = false;
+         Time.timeScale = 0;
+         uI.gameObject.SetActive(true);
+         inventoryPanel.gameObject.SetActive(true);
+       }
+       else 
+       {
+        Time.timeScale = 1;
+        uI.gameObject.SetActive(false);
+        Player.Instance.CanShoot = true;
+        inventoryPanel.gameObject.SetActive(false);
+       }
         
     }
     public void OnContinuePressed()
@@ -43,6 +58,7 @@ public class GameManager : MonoBehaviour
       Time.timeScale = 1;
       uI.gameObject.SetActive(false);
       Player.Instance.CanShoot = true;
+      inventoryPanel.gameObject.SetActive(false);
     }
     public void OnSoundPressed()
     {
