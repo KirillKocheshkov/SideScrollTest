@@ -17,37 +17,34 @@ MonoBehaviour:
     itemName: "\u041F\u0443\u0437\u044B\u0440\u044C"
     description: "\u0412\u043E\u0441\u0442\u0430\u043D\u0430\u0432\u043B\u0438\u0432\u0430\u0435\u0442
       \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u0435"
-    value: 0
-    buffType: 0
-    icon: {fileID: 0}
+    value: 10
+    buffType: 3
+    icon: {fileID: 21300000, guid: 031bb5cf4828a304cbe358b80d1c2121, type: 3}
   - id: 1
     itemName: "\u0423\u0441\u0438\u043B\u0435\u043D\u0438\u0435 \u0443\u0440\u043E\u043D\u0430"
     description: "\u0414\u0430,\u0434\u0430 \u0438\u043C\u0435\u043D\u043D\u043E
       \u044D\u0442\u043E \u0438 \u0434\u0435\u043B\u0430\u0435\u0442"
-    value: 0
+    value: 2
     buffType: 0
     icon: {fileID: 21300000, guid: 915a20383ff09d948b442727c3cc9261, type: 3}
   - id: 2
     itemName: "\u0417\u0435\u043B\u044C\u0435 \u0421\u0422\u043E\u0439\u043A\u043E\u0441\u0442\u0438"
     description: "\u0423\u0432\u0435\u043B\u0438\u0447\u0438\u0432\u0430\u0435\u0442
       \u0431\u0440\u043E\u043D\u044E (\u0445\u043E\u0442\u044C \u0435\u0435 \u043D\u0435\u0442)"
-    value: 0
+    value: 2
     buffType: 2
     icon: {fileID: 21300000, guid: a79bf518362350c4e8dbac1ae10ac6bb, type: 3}
   - id: 3
-    itemName: "\u0417\u0435\u043B\u044C\u0435 \u0447\u0435\u0433\u043E-\u0442\u043E"
-    description: "\u042F \u043D\u0435 \u0437\u043D\u0430\u044E, \u0447\u0442\u043E
-      \u043E\u043D\u043E \u0434\u0435\u043B\u0430\u0435\u0442, \u043D\u043E \u043E\u043D\u043E
-      \u0435\u0441\u0442\u044C"
-    value: 0
-    buffType: 0
+    itemName: "\u041F\u0440\u044B\u0436\u043A\u0430"
+    description: "\u0412\u044B\u0448\u0435 \u043F\u0440\u044B\u0433"
+    value: 10
+    buffType: 1
     icon: {fileID: 21300000, guid: fa56a24cf14958b4ba6896dfe378b8cb, type: 3}
   currentItem:
-    id: 3
-    itemName: "\u0417\u0435\u043B\u044C\u0435 \u0447\u0435\u0433\u043E-\u0442\u043E"
-    description: "\u042F \u043D\u0435 \u0437\u043D\u0430\u044E, \u0447\u0442\u043E
-      \u043E\u043D\u043E \u0434\u0435\u043B\u0430\u0435\u0442, \u043D\u043E \u043E\u043D\u043E
-      \u0435\u0441\u0442\u044C"
-    value: 0
-    buffType: 0
-    icon: {fileID: 21300000, guid: fa56a24cf14958b4ba6896dfe378b8cb, type: 3}
+    id: 0
+    itemName: "\u041F\u0443\u0437\u044B\u0440\u044C"
+    description: "\u0412\u043E\u0441\u0442\u0430\u043D\u0430\u0432\u043B\u0438\u0432\u0430\u0435\u0442
+      \u0437\u0434\u043E\u0440\u043E\u0432\u044C\u0435"
+    value: 10
+    buffType: 3
+    icon: {fileID: 21300000, guid: 031bb5cf4828a304cbe358b80d1c2121, type: 3}

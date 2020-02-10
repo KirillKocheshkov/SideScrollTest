@@ -83,5 +83,6 @@ public enum ItemType
     PotionOfPower = 3,
     DamagePotion = 1,
     DefencePotion = 2,
+    HealthPotion = 0
     
 }

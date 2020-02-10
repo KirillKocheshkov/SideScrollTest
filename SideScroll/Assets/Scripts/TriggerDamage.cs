@@ -38,6 +38,7 @@ public class TriggerDamage : MonoBehaviour
             health.TakeDamage(dmg);
             canDamage =false;
             StartCoroutine("Cooldown");
+            Debug.Log(dmg);
                          
         }
         if(destroyOnTrigger)

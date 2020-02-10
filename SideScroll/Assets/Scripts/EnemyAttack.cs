@@ -9,7 +9,7 @@ public class EnemyAttack : MonoBehaviour
     public string collisionTag;
     private float direction;
     GameObject collided;
-    private void OnCollisionStay2D(Collision2D other)
+    private void OnTriggerStay2D(Collider2D other)
     {
         if (other.gameObject.CompareTag(collisionTag) && !main.IsAttacking)
         {
@@ -18,7 +18,8 @@ public class EnemyAttack : MonoBehaviour
             PrepareAttack();
         }
     }
-    private void OnCollisionExit2D(Collision2D other)
+    
+    private void OnTriggerExit2D(Collider2D other)
     {
         collided = null;
         

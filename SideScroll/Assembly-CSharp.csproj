@@ -58,6 +58,7 @@
      <Compile Include="Assets\Scripts\BuffReceaver.cs" />
      <Compile Include="Assets\Scripts\Cell.cs" />
      <Compile Include="Assets\Scripts\Coin.cs" />
+     <Compile Include="Assets\Scripts\Controller2D.cs" />
      <Compile Include="Assets\Scripts\Enemy.cs" />
      <Compile Include="Assets\Scripts\EnemyAttack.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
@@ -68,10 +69,13 @@
      <Compile Include="Assets\Scripts\InventoryUiManager.cs" />
      <Compile Include="Assets\Scripts\ItemComponent.cs" />
      <Compile Include="Assets\Scripts\MainMenu.cs" />
+     <Compile Include="Assets\Scripts\MovementCOmponent.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
      <Compile Include="Assets\Scripts\PlayerInventory.cs" />
+     <Compile Include="Assets\Scripts\PressedButton.cs" />
      <Compile Include="Assets\Scripts\ScriptableObjects\ItemDatabase.cs" />
      <Compile Include="Assets\Scripts\TriggerDamage.cs" />
+     <Compile Include="Assets\Scripts\UiCharacterController.cs" />
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>D:/Projects/Repository/SideScroll/SideScrollTest/SideScroll/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
  </Reference>

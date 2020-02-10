@@ -25,7 +25,7 @@ public class Health : MonoBehaviour
 
     public void TakeDamage (int dmg)
     {
-        currentHealth -= dmg;
+        currentHealth -= Mathf.Clamp(dmg - armorAmount,0, int.MaxValue );
          if(animator!= null)
             {
                 animator.SetBool("IsDamaged", true);

@@ -8,6 +8,7 @@ using System;
 #pragma warning disable CS0649
 public class Player : MonoBehaviour
 {
+    #region Fields and Prop.
     [Header("Movement")]
     [SerializeField]
     private float acseleration = 1f;
@@ -43,6 +44,7 @@ public class Player : MonoBehaviour
     public BuffReceaver BuffReceaver { get => buffReceaver; }
 
     public Health HP { get => hP; }
+    private UiCharacterController UiController;
 
 
     [Header("Arrow")]
@@ -85,7 +87,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float rayLenght;
     public static Player Instance { get; private set; }
     
-
+#endregion
 
 
 
@@ -122,6 +124,12 @@ public class Player : MonoBehaviour
         }
         buffReceaver.OnBuffChanged += ApllyBuff;
     }
+    public void ItinUiController (UiCharacterController controller)
+    {
+        UiController = controller;
+        controller.Jump.onClick.AddListener(Jump);
+        controller.Fire.onClick.AddListener(PrepereAttack);
+    }
 
 private void ApllyBuff(Buff currentBuff)
 {
@@ -141,6 +149,9 @@ private void ApllyBuff(Buff currentBuff)
        case(BuffType.Force):
        currentBuff.ForceBuff(ref force);
        break;
+       case(BuffType.Heal):
+       hP.HealObject((int)Mathf.Round(currentBuff.additiveBonus));
+       break;
        
    }
    
@@ -158,8 +169,10 @@ private void ApllyBuff(Buff currentBuff)
     }
     private void Update()
     {
-        Jump();
-        PrepereAttack();
+#if UNITY_EDITOR
+            if (Input.GetKeyDown(KeyCode.Space)) Jump();
+        
+#endif 
 
     }
 
@@ -185,7 +198,10 @@ private void ApllyBuff(Buff currentBuff)
         launchPoint.transform.localPosition = spriterend.flipX ? lPRight : lPLeft;
 
         myVelocity = rb.velocity;
-        if (Input.GetKey(KeyCode.A) && !isShooting)
+/*
+#region  UnityCOntroller
+#if UNITY_EDITOR
+      if (Input.GetKey(KeyCode.A) && !isShooting)
         {
             myVelocity.x -= acseleration * Time.deltaTime;
             if (myVelocity.x < (maxSpeed * -1))
@@ -193,9 +209,7 @@ private void ApllyBuff(Buff currentBuff)
                 myVelocity.x = maxSpeed * -1;
             }
             rb.velocity = myVelocity;
-
-
-            //transform.Translate(Vector2.left*Time.deltaTime * speed);
+            
             if (spriterend.flipX != true)
             {
                 spriterend.flipX = true;
@@ -203,8 +217,8 @@ private void ApllyBuff(Buff currentBuff)
             }
 
         }
+      if (Input.GetKey(KeyCode.D) && !isShooting)
 
-        if (Input.GetKey(KeyCode.D) && !isShooting)
         {
             myVelocity.x += acseleration * Time.deltaTime;
             if (myVelocity.x > (maxSpeed))
@@ -226,7 +240,7 @@ private void ApllyBuff(Buff currentBuff)
         {
             WalkUpTheSlope();
         }
-        if((Input.GetKey(KeyCode.D)|| Input.GetKey(KeyCode.A)))
+        if (Input.GetKey(KeyCode.A)|| Input.GetKey(KeyCode.D))
         {
             
            if(OnSlope() && !walingUpSlipe&& !isJumping)
@@ -236,7 +250,86 @@ private void ApllyBuff(Buff currentBuff)
            }
         }
 
-        if (!Input.GetKey(KeyCode.D) && (!Input.GetKey(KeyCode.A)))
+        if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
+
+        {
+            if (rb.velocity.x > 0)
+            {
+                myVelocity.x -= acseleration * Time.deltaTime * 2;
+                {
+                    if (myVelocity.x < 0)
+                    {
+                        myVelocity.x = 0;
+                    }
+                }
+                rb.velocity = myVelocity;
+            }
+            else if (rb.velocity.x < 0)
+            {
+                myVelocity.x += acseleration * Time.deltaTime * 2;
+
+                if (myVelocity.x > 0)
+                {
+                    myVelocity.x = 0;
+                }
+                rb.velocity = myVelocity;
+            }
+
+        }
+    
+#endif
+#endregion
+      */
+        if (UiController.Left.IsPressed && !isShooting)
+        {
+            myVelocity.x -= acseleration * Time.deltaTime;
+            if (myVelocity.x < (maxSpeed * -1))
+            {
+                myVelocity.x = maxSpeed * -1;
+            }
+            rb.velocity = myVelocity;
+            
+            if (spriterend.flipX != true)
+            {
+                spriterend.flipX = true;
+
+            }
+
+        }
+
+        if (UiController.Right.IsPressed && !isShooting)
+        {
+            myVelocity.x += acseleration * Time.deltaTime;
+            if (myVelocity.x > (maxSpeed))
+            {
+                myVelocity.x = maxSpeed;
+            }
+            rb.velocity = myVelocity;
+            if (spriterend.flipX == true)
+            {
+                spriterend.flipX = false;
+
+
+            }
+
+
+        }
+        // slope focrce
+        if (!isJumping && ground.IsGrounded)
+        {
+            WalkUpTheSlope();
+        }
+        if(UiController.Left.IsPressed|| UiController.Right.IsPressed)
+        {
+            
+           if(OnSlope() && !walingUpSlipe&& !isJumping)
+           {
+               transform.Translate(Vector2.down * playerCol.size.y / 2 * slopeForce * Time.deltaTime);
+               
+           }
+        }
+
+        if (!UiController.Left.IsPressed && !UiController.Right.IsPressed)
 
         {
             if (rb.velocity.x > 0)
@@ -268,8 +361,7 @@ private void ApllyBuff(Buff currentBuff)
 
     void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
+        
             if (Ground.IsGrounded)
             {
                 ShootInterrupt();
@@ -278,7 +370,7 @@ private void ApllyBuff(Buff currentBuff)
                 isJumping = true;
 
             }
-        }
+        
 
     }
 
@@ -336,7 +428,7 @@ private void ApllyBuff(Buff currentBuff)
     }
     void PrepereAttack()
     {
-        if (Input.GetMouseButtonDown(0) && canShoot && Ground.IsGrounded && !isShooting)
+        if ( canShoot && Ground.IsGrounded && !isShooting)
         {
             rb.velocity = Vector3.zero;
             isShooting = true;

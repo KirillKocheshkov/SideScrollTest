@@ -6,13 +6,16 @@ public class ItemComponent : MonoBehaviour, IReusableOblects
 {
     [SerializeField] private ItemType type;
     Item currentitem;
+    CapsuleCollider2D collision;
     [SerializeField] SpriteRenderer rendererComp;
+    [SerializeField] private Animator animator;
 
     public Item CurrentItem { get => currentitem;  }
 
     public void Destroy(GameObject gameObject)
     {
-      MonoBehaviour.Destroy(gameObject);
+      animator.SetTrigger("Destroy");
+      collision.enabled =false;
     }
 
     private void Start()
@@ -20,6 +23,13 @@ public class ItemComponent : MonoBehaviour, IReusableOblects
         GameManager.Instance.itemDictionary.Add(gameObject,this);
         currentitem = GameManager.Instance.itemDatabase.GetItem((int)type);
         rendererComp.sprite = currentitem.Icon;
+        collision = GetComponent<CapsuleCollider2D>();
+    }
+
+    
+    public void EndDestroy()
+    {
+        MonoBehaviour.Destroy(gameObject);
     }
 }
 
