@@ -59,7 +59,7 @@ Camera:
   far clip plane: 100
   field of view: 60
   orthographic: 1
-  orthographic size: 7.2385626
+  orthographic size: 5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -204,14 +204,13 @@ GameObject:
   m_Component:
   - component: {fileID: 4187328295363306629}
   - component: {fileID: 4187328295363306628}
-  - component: {fileID: 4187328295363306630}
   - component: {fileID: 4187328295363306624}
   - component: {fileID: 4133377726899453932}
-  - component: {fileID: 1108881357802425553}
   - component: {fileID: 815846938}
   - component: {fileID: 1501602391859032096}
   - component: {fileID: 1283859290}
   - component: {fileID: 8458642806561321210}
+  - component: {fileID: 1723831585}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -286,27 +285,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!50 &4187328295363306630
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4187328295363306635}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 4
 --- !u!114 &4187328295363306624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -324,14 +302,17 @@ MonoBehaviour:
   minHeight: -10
   maxSlopAngle: 80
   slopeForce: 3
+  moveSpeed: 6
+  gravity: -20
   animator: {fileID: 1501602391859032096}
   playerCol: {fileID: 1283859290}
+  buffReceaver: {fileID: 8458642806561321210}
   arrow: {fileID: 3233779293798800159, guid: 76c5533793635d940bfb5844ead446c2, type: 3}
   launchPoint: {fileID: 6956605314782792844}
   force: 8
   launchForce: 50
   isCheatEnabled: 0
-  cooldown: 1
+  cooldown: 3
   arrowCount: 3
   layer:
     serializedVersion: 2
@@ -352,18 +333,7 @@ MonoBehaviour:
   maxHealthAmount: 100
   parent: {fileID: 4187328295363306624}
   animator: {fileID: 1501602391859032096}
---- !u!114 &1108881357802425553
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4187328295363306635}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f7bf31647c753942b9b7fffd14be409, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  armorAmount: 0
 --- !u!114 &815846938
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -378,6 +348,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiText: {fileID: 0}
   invetorySize: 20
+  buffReceaver: {fileID: 8458642806561321210}
 --- !u!95 &1501602391859032096
 Animator:
   serializedVersion: 3
@@ -435,3 +406,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0b2f1179959891438b3d36e4a74eb51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1723831585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4187328295363306635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 602cb357b8ccb0043aaa2cec3bb7cd9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collisionMask:
+    serializedVersion: 2
+    m_Bits: 256
+  horizontalRayCount: 4
+  verticalRayCount: 4

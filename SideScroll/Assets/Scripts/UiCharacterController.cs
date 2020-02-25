@@ -9,19 +9,30 @@ public class UiCharacterController : MonoBehaviour
     [SerializeField] private PressedButton left;
     [SerializeField] private PressedButton right;
     [SerializeField] private  Button fire;
-    [SerializeField] private Button jump;
+   [SerializeField] private PressedButton jump;
+    [SerializeField] private  float maxCooldown;
+    [SerializeField] private  float currentCooldown;
 
     public PressedButton Right { get => right;  }
     public PressedButton Left { get => left;  }
     public Button Fire { get => fire; set => fire = value; }
-    public Button Jump { get => jump; set => jump = value; }
+    public PressedButton Jump { get => jump; set => jump = value; }
+    public float MaxCooldown { get => maxCooldown;  }
+    public float CurrentCooldown { get => currentCooldown; set => currentCooldown = value; }
 
     #endregion
 
-   
+
     void Start()
     {
         Player.Instance.ItinUiController(this);
+         maxCooldown = Player.Instance.Cooldown;
+         currentCooldown = maxCooldown;
+    }
+     private void Update()
+    {
+        Fire.image.fillAmount = CurrentCooldown / MaxCooldown;
+        
     }
 
     

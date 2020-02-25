@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using UnityStandardAssets.CrossPlatformInput;
 
 
 #pragma warning disable CS0649
@@ -22,10 +23,17 @@ public class Player : MonoBehaviour
     public float Force { get => force; set => force = value; }
     public Vector2 MyVelocity { get => myVelocity; }
     Vector2 myVelocity;
-    [SerializeField]
-    float maxSlopAngle;
-    [SerializeField]
-    float slopeForce;
+       
+    
+    [SerializeField] float moveSpeed = 6; 
+     float gravity ;
+    Vector3 velocity;
+    Controller2D controller;
+    [SerializeField] float jumpHight =4 , timeToReachApex = 0.4f;
+    float jumpVelocity;
+    float currentMoveSpeed;
+    float smoothTimeAirborn = 0.2f;
+    float smoothTimeGround = .1f;
 
 
 
@@ -34,8 +42,8 @@ public class Player : MonoBehaviour
     Animator animator;
     private Rigidbody2D rb;
     private SpriteRenderer spriterend;
-    GroundDetection ground;
-    public GroundDetection Ground { get => ground; }
+    
+    
     public Animator Animator { get => animator; }
     [SerializeField]
     BoxCollider2D playerCol;
@@ -68,8 +76,7 @@ public class Player : MonoBehaviour
     public bool IsMoveing { get => isMoveing; set => isMoveing = value; }
     public bool IsJumping { get => isJumping; }
     public bool CanShoot { get => canShoot; set => canShoot = value; }
-    bool walingUpSlipe;
-
+    
     bool isMoveing;
 
     private bool isJumping;
@@ -94,15 +101,16 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
+        
         spriterend = GetComponent<SpriteRenderer>();
-        ground = GetComponent<GroundDetection>();
+        
         lPLeft = launchPoint.localPosition;
         lPRight = new Vector3(lPLeft.x * -1, lPLeft.y, lPLeft.z);
         arrowList = new List<Arrow>();
         playerCol = GetComponent<BoxCollider2D>();
         hP = GetComponent<Health>();
         Instance = this;
+        controller = GetComponent<Controller2D> ();
 
 
 
@@ -112,8 +120,8 @@ public class Player : MonoBehaviour
     }
     void Start()
     {
-
-
+        gravity = -(2*jumpHight)/Mathf.Pow(timeToReachApex,2);
+        jumpVelocity = Mathf.Abs(gravity * timeToReachApex);
 
         for (int i = 0; i < arrowCount; i++)
         {
@@ -127,7 +135,6 @@ public class Player : MonoBehaviour
     public void ItinUiController (UiCharacterController controller)
     {
         UiController = controller;
-        controller.Jump.onClick.AddListener(Jump);
         controller.Fire.onClick.AddListener(PrepereAttack);
     }
 
@@ -163,6 +170,7 @@ private void ApllyBuff(Buff currentBuff)
         Movement();
         FallDetect();
         AnimationHandler();
+        DrawCooldown();
 
         
 
@@ -170,7 +178,7 @@ private void ApllyBuff(Buff currentBuff)
     private void Update()
     {
 #if UNITY_EDITOR
-            if (Input.GetKeyDown(KeyCode.Space)) Jump();
+           
         
 #endif 
 
@@ -183,7 +191,7 @@ private void ApllyBuff(Buff currentBuff)
         if (gameObject.transform.position.y <= minHeight && isCheatEnabled == true)
         {
             gameObject.transform.position = new Vector3(0, 0, 0);
-            rb.velocity = new Vector2(0, 0);
+           // rb.velocity = new Vector2(0, 0);
 
         }
         else if (isCheatEnabled == false && gameObject.transform.position.y <= minHeight)
@@ -194,47 +202,41 @@ private void ApllyBuff(Buff currentBuff)
     #region Movement 
     private void Movement()
     {
-        isJumping = isJumping && !Ground.IsGrounded;
+        isJumping = isJumping && !controller.collisions.below;
         launchPoint.transform.localPosition = spriterend.flipX ? lPRight : lPLeft;
-
-        myVelocity = rb.velocity;
-/*
-#region  UnityCOntroller
-#if UNITY_EDITOR
-      if (Input.GetKey(KeyCode.A) && !isShooting)
+        Vector2 input;
+        
+        if(controller.collisions.above || controller.collisions.below)
         {
-            myVelocity.x -= acseleration * Time.deltaTime;
-            if (myVelocity.x < (maxSpeed * -1))
-            {
-                myVelocity.x = maxSpeed * -1;
-            }
-            rb.velocity = myVelocity;
+            velocity.y = 0;
+        }
+        
+        if (Input.GetKeyDown(KeyCode.Space) || UiController.Jump.IsPressed) 
+            Jump();
+        if(Input.GetKey(KeyCode.A)|| Input.GetKey(KeyCode.D)) 
+        {
+            input = new Vector2 (Input.GetAxisRaw("Horizontal"),Input.GetAxisRaw("Vertical") );
             
-            if (spriterend.flipX != true)
-            {
-                spriterend.flipX = true;
-
-            }
-
         }
-      if (Input.GetKey(KeyCode.D) && !isShooting)
-
+        else
         {
-            myVelocity.x += acseleration * Time.deltaTime;
-            if (myVelocity.x > (maxSpeed))
-            {
-                myVelocity.x = maxSpeed;
-            }
-            rb.velocity = myVelocity;
-            if (spriterend.flipX == true)
-            {
-                spriterend.flipX = false;
+            input = new Vector2 (CrossPlatformInputManager.GetAxis("Horizontal"), CrossPlatformInputManager.GetAxis("Vertical"));
+        } 
+        
+        float targetVeclocity = input.x * moveSpeed; 
+        velocity.x = Mathf.SmoothDamp(velocity.x, targetVeclocity, ref currentMoveSpeed,controller.collisions.below? smoothTimeGround: smoothTimeAirborn);
+        
+        
+		 velocity.y += gravity * Time.deltaTime;
+        
+		controller.Move (velocity * Time.deltaTime);
+        
 
+      
+/*
 
-            }
-
-
-        }
+            
+           
         // slope focrce
         if (!isJumping && ground.IsGrounded)
         {
@@ -250,123 +252,25 @@ private void ApllyBuff(Buff currentBuff)
            }
         }
 
-        if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
-
-        {
-            if (rb.velocity.x > 0)
-            {
-                myVelocity.x -= acseleration * Time.deltaTime * 2;
-                {
-                    if (myVelocity.x < 0)
-                    {
-                        myVelocity.x = 0;
-                    }
-                }
-                rb.velocity = myVelocity;
-            }
-            else if (rb.velocity.x < 0)
-            {
-                myVelocity.x += acseleration * Time.deltaTime * 2;
-
-                if (myVelocity.x > 0)
-                {
-                    myVelocity.x = 0;
-                }
-                rb.velocity = myVelocity;
-            }
-
-        }
+       
     
 #endif
 #endregion
-      */
-        if (UiController.Left.IsPressed && !isShooting)
-        {
-            myVelocity.x -= acseleration * Time.deltaTime;
-            if (myVelocity.x < (maxSpeed * -1))
-            {
-                myVelocity.x = maxSpeed * -1;
-            }
-            rb.velocity = myVelocity;
-            
-            if (spriterend.flipX != true)
-            {
-                spriterend.flipX = true;
-
-            }
+    
 
         }
-
-        if (UiController.Right.IsPressed && !isShooting)
-        {
-            myVelocity.x += acseleration * Time.deltaTime;
-            if (myVelocity.x > (maxSpeed))
-            {
-                myVelocity.x = maxSpeed;
-            }
-            rb.velocity = myVelocity;
-            if (spriterend.flipX == true)
-            {
-                spriterend.flipX = false;
-
-
-            }
-
-
-        }
-        // slope focrce
-        if (!isJumping && ground.IsGrounded)
-        {
-            WalkUpTheSlope();
-        }
-        if(UiController.Left.IsPressed|| UiController.Right.IsPressed)
-        {
-            
-           if(OnSlope() && !walingUpSlipe&& !isJumping)
-           {
-               transform.Translate(Vector2.down * playerCol.size.y / 2 * slopeForce * Time.deltaTime);
-               
-           }
-        }
-
-        if (!UiController.Left.IsPressed && !UiController.Right.IsPressed)
-
-        {
-            if (rb.velocity.x > 0)
-            {
-                myVelocity.x -= acseleration * Time.deltaTime * 2;
-                {
-                    if (myVelocity.x < 0)
-                    {
-                        myVelocity.x = 0;
-                    }
-                }
-                rb.velocity = myVelocity;
-            }
-            else if (rb.velocity.x < 0)
-            {
-                myVelocity.x += acseleration * Time.deltaTime * 2;
-
-                if (myVelocity.x > 0)
-                {
-                    myVelocity.x = 0;
-                }
-                rb.velocity = myVelocity;
-            }
-
-        }
-    }
+   */ }
     #endregion
 
 
     void Jump()
     {
         
-            if (Ground.IsGrounded)
+            if (controller.collisions.below)
             {
                 ShootInterrupt();
-                rb.AddForce(Vector2.up * force, ForceMode2D.Impulse);
-                if (!animator.GetBool("IsDamaged")) animator.SetTrigger("StartJump");
+                velocity.y = jumpVelocity;
+	            if (!animator.GetBool("IsDamaged")) animator.SetTrigger("StartJump");
                 isJumping = true;
 
             }
@@ -381,19 +285,19 @@ private void ApllyBuff(Buff currentBuff)
         {
             if (!animator.GetBool("IsDamaged"))
             {
-                if (myVelocity.x > 0)
+                if (velocity.x > 0)
                 {
                     spriterend.flipX = false;
                 }
-                else if (myVelocity.x < 0)
+                else if (velocity.x < 0)
                 {
                     spriterend.flipX = true;
                 }
-                animator.SetFloat("Speed", Mathf.Abs(myVelocity.x));
-                animator.SetBool("isGrounded", Ground.IsGrounded);
+                animator.SetFloat("Speed", Mathf.Abs(velocity.x));
+                animator.SetBool("isGrounded", controller.collisions.below);
 
             }
-            if (!isJumping && !Ground.IsGrounded)
+            if (!isJumping && !controller.collisions.below)
             {
                 ShootInterrupt();
                 if (!animator.GetBool("IsDamaged")) animator.SetTrigger("StartFall");
@@ -410,17 +314,32 @@ private void ApllyBuff(Buff currentBuff)
         currentArrow.transform.parent = null;
         currentArrow.SimulatePhysic = true;
         currentArrow.LaunchArrow(spriterend.flipX ? new Vector2(-1, 0) : new Vector2(1, 0), this, LaunchForce);
+        
         StartCoroutine("CoolDown");
         isShooting = false;
+        
 
 
 
 
 
     }
-
+    private void DrawCooldown ()
+    {
+        
+        if (!canShoot)
+        {
+            if(UiController.CurrentCooldown < UiController.MaxCooldown )
+            {
+                UiController.CurrentCooldown += Time.deltaTime;
+                
+            }
+            else {UiController.CurrentCooldown = UiController.MaxCooldown;}
+        }
+    }
     IEnumerator CoolDown()
     {
+        UiController.CurrentCooldown  = 0;
         canShoot = false;
         yield return new WaitForSeconds(cooldown);
         canShoot = true;
@@ -428,9 +347,9 @@ private void ApllyBuff(Buff currentBuff)
     }
     void PrepereAttack()
     {
-        if ( canShoot && Ground.IsGrounded && !isShooting)
+        if ( canShoot && controller.collisions.below && !isShooting)
         {
-            rb.velocity = Vector3.zero;
+            velocity = Vector3.zero;
             isShooting = true;
             Animator.SetTrigger("Attack");
         }
@@ -482,57 +401,10 @@ private void ApllyBuff(Buff currentBuff)
     {
         animator.SetBool("IsDamaged", false);
     }
-    void SlopeMovement(ref Vector2 velocity, float slopAngle)
-    {
-        
-        
-       float moveDistance  = Mathf.Abs(velocity.x);
-       velocity.y = Mathf.Sin(slopAngle * Mathf.Deg2Rad) *  moveDistance + ( acseleration * Time.deltaTime);
-       velocity.x = Mathf.Cos(slopAngle * Mathf.Deg2Rad) *  moveDistance * Mathf.Sign(velocity.x) + (acseleration *Mathf.Sign(velocity.x) * Time.deltaTime);
-      
-       
-        
-        
+    
 
-    }
-
-    private void WalkUpTheSlope()
-    {
-        Vector2 bottom;
-        bottom = (Vector2)transform.position - new Vector2(0, playerCol.size.y / 2);
-        RaycastHit2D hit = Physics2D.Raycast(bottom, Vector2.right * Mathf.Clamp(rb.velocity.x, -1, 1), 0.5f,layer);
-        Debug.DrawRay(bottom, Vector2.right * Mathf.Clamp(rb.velocity.x, -1, 1), Color.blue);
-        
-        
-        if(hit)
-        {
-            float  slopAngle = Vector2.Angle(new Vector2(hit.normal.x,hit.normal.y),Vector2.up);
-            if(slopAngle > 10 && slopAngle<maxSlopAngle )
-            {
-            Vector2 velocity = rb.velocity;
-            SlopeMovement( ref velocity,slopAngle);
-            rb.velocity = velocity;
-            
-            }
-            walingUpSlipe = true;
-            
-        }
-        else  walingUpSlipe = false;
-
-
-    }
-    private bool OnSlope()
-    {
-        if(isJumping)
-        {return false;}
-        
-        RaycastHit2D hit2D = Physics2D.Raycast(transform.position,Vector2.down,playerCol.size.y / 2 * rayLenght,layer);
-        Debug.DrawRay(transform.position, Vector2.down*playerCol.size.y / 2 * rayLenght, Color.red);
-        if(hit2D.normal != Vector2.up)return true;
-        else return false;
-        
-
-    }
+    
+   
    
 
 
